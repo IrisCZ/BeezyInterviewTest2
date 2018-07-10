@@ -1,6 +1,3 @@
-const buttonStyle = {
-};
-
 class Books extends React.Component {
 
   constructor(props) {
@@ -10,13 +7,18 @@ class Books extends React.Component {
     this.state.title = "";
     this.state.author = "";
     this.state.genre = "";
+    this.state.newGenre = "";
+    this.state.genres = ["Drama", "Comedy", "Horror", "Science fiction"];
     this.state.idCounter = 1;
     this.state.currentId = 0;
     this.saveBook = this.saveBook.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleAuthorChange = this.handleAuthorChange.bind(this);
     this.handleGenreChange = this.handleGenreChange.bind(this);
+    this.state.showModal = false;
   }
+
+
 
   saveBook() {
     if(this.state.currentId > 0) {
@@ -47,6 +49,11 @@ class Books extends React.Component {
     this.setState({genre: event.target.value});
   }
 
+  handleGenresListChange(event){
+    let index = event.target.dataset.index
+    this.state.genres[index] = event.target.innerHTML;
+    this.setState({genres: this.state.genres});
+  }
 
   deleteBook(bookToDelete){
     return function(){
@@ -60,6 +67,33 @@ class Books extends React.Component {
     }
   }
 
+  toggleModal() {
+    this.setState({
+      showModal: !this.state.showModal
+    });
+  }
+  addGenre(){
+      this.state.genres.push(this.state.newGenre);
+      this.setState({genres: this.state.newGenre})
+  }
+
+  deleteGenre(genreToDelete){
+    return function(){
+      this.state.genres.splice(genreToDelete, 1)
+      this.setState({genres: this.state.genres})
+    }
+  }
+
+  editGenre(genreToUpdate){
+    return function(){
+      this.setState({genre: bookToUpdate.genre});
+    }
+  }
+
+  editGenreField(event){
+    event.target.setAttribute("contenteditable", true);
+  }
+
   render() {
 
     const head = React.createElement('thead', null,
@@ -68,15 +102,14 @@ class Books extends React.Component {
         React.createElement('th', {class: 'author'}, 'author'),
         React.createElement('th', {class: 'genre'}, 'genre'),
         React.createElement('th', {class: 'actions'}, 'actions')]
-      )
-    );
+        )
+      );
 
 
-    let rows = [];
     const arrowIcon = '\u2B9D';
     const saveIcon = '&#x1F4BE;';
 
-    for (let book of this.state.books) {
+    let rows = this.state.books.map(book => {
       let actionButtons = [
         React.createElement('button', {class: 'button-close', title: 'Close', onClick: this.deleteBook(book).bind(this)}, 'X'),
         React.createElement('button', {class: 'button-close', title: 'Update', onClick: this.editBook(book).bind(this)}, arrowIcon)
@@ -85,29 +118,100 @@ class Books extends React.Component {
       React.createElement('td', null, book.author),
       React.createElement('td', null, book.genre),
       React.createElement('td', null, actionButtons)
-    ]
+      ]
 
-
-
-      rows.push(React.createElement('tr', null, row));
-    }
-
+        return React.createElement('tr', null, row);
+      }
+    )
     const body = React.createElement('tbody', null, rows)
 
+    let genreOptions = this.state.genres.map(item =>  React.createElement('option', {value: item}))
+    let searchGenres =  [
+      React.createElement('label', null, 'Select a genre'),
+      React.createElement('div',{class:'search__genres__input'}, [
+        React.createElement('input', {type: 'text',
+                                      class:'input-lg',
+                                      list: 'genres',
+                                      placeholder:'e.g. Science Fiction',
+                                      name: 'genres',
+                                      value: this.state.genre,
+                                      onChange: this.handleGenreChange}),
+        React.createElement('datalist', { id: 'genres',
+                                          class:'input-lg'},
+                                          genreOptions),
+        React.createElement('button', {onClick: this.toggleModal.bind(this)},'Edit')
+      ]),
+      React.createElement('span', {class: 'search__genres__info'}, 'To manage the genres list click the edit button'),
+    ];
+
+    /*modal GENRES*/
+
+    const genresTableHead = React.createElement('thead', null,
+                            React.createElement('tr', null,[
+                              React.createElement('th', {class: 'genre'}, 'genre'),
+                              React.createElement('th', {class: 'actions'}, 'actions')]
+                            )
+                          );
+
+    let genresTableRows = this.state.genres.map((genre, i) => {
+
+      let genreTableRow = [
+        React.createElement('td', { "data-index": i,
+                                    class: "editable",
+                                    onClick: this.editGenreField,
+                                    onBlur: this.handleGenresListChange.bind(this)}, genre),
+        React.createElement('td', null, React.createElement('button', {class: 'button-close', title: 'Close', onClick: this.deleteGenre(genre).bind(this)}, 'X'))
+      ]
+        return React.createElement('tr', null, genreTableRow);
+      }
+    )
+
+    const genresTableBody = React.createElement('tbody', null, genresTableRows)
+    const genresTable = [genresTableHead, genresTableBody];
+
+    let modalGenres = [
+      React.createElement('div', {class:'modal__inner'}, [
+        React.createElement('h2', {class:'title'}, 'Genres'),
+        React.createElement('div', {class: 'flex modal__inputField'}, [
+          React.createElement('label', null, 'Add a new genre'),
+          React.createElement('input', {type: 'text',
+                                        class:'input-lg modal__input',
+                                        placeholder:'e.g. Comedy',
+                                        value: this.state.newGenre,
+                                        onChange: this.handleGenreChange}),
+          React.createElement('button', {class: 'modal__add-button', onClick: this.addGenre.bind(this)}, '+')
+        ]),
+        React.createElement('table', {class:'striped-table'}, genresTable),
+        React.createElement('p', null, 'To edit a genre click twice on its cell'),
+        React.createElement('button', {class:'modal__close-button', onClick:  this.toggleModal.bind(this)}, 'X')
+      ])
+    ]
 
     return [
       React.createElement('div', {class:'col-xs-4 flex'}, [
-        React.createElement('input', {type: 'text', class:'input-lg', placeholder:'Write the title here', value: this.state.title, onChange: this.handleTitleChange}),
+        React.createElement('label', null, 'Write the title here'),
+        React.createElement('input', {type: 'text',
+                                      class:'input-lg',
+                                      placeholder:'e.g. 1Q84',
+                                      value: this.state.title,
+                                      onChange: this.handleTitleChange}),
       ]),
       React.createElement('div', {class:'col-xs-4 flex'}, [
-        React.createElement('input', {type: 'text', class:'input-lg', placeholder:'Write the author here', value: this.state.author, onChange: this.handleAuthorChange}),
+        React.createElement('label', null, 'Write the author here'),
+        React.createElement('input', {type: 'text',
+                                      class:'input-lg',
+                                      placeholder:'e.g. Haruki Murakami',
+                                      value: this.state.author,
+                                      onChange: this.handleAuthorChange}),
       ]),
-      React.createElement('div', {class:'col-xs-4 flex'}, [
-        React.createElement('input', {type: 'text', class:'input-lg', placeholder:'Write the genre here', value: this.state.genre, onChange: this.handleGenreChange}),
-        React.createElement('button', {style: buttonStyle, onClick: this.saveBook}, '💾')
+      React.createElement('div', {class:'col-xs-3 flex search__genres__container'}, searchGenres),
+      React.createElement('div', {class:'col-xs-1 flex save__container'}, [
+        React.createElement('button', {class: 'saveButton', onClick: this.saveBook}, '💾')
       ]),
-      React.createElement('table', {class: 'striped-table col-xs-12'}, [head, body])
-    ];
+      React.createElement('table', {class: 'striped-table col-xs-12'}, [head, body]),
+
+      React.createElement('div', {class: this.state.showModal ? 'modal':'hidden'}, modalGenres)
+    ]
   }
 }
 

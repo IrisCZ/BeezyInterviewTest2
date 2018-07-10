@@ -1,0 +1,130 @@
+@charset "UTF-8";
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Muli", sans-serif;
+  scroll-behavior: smooth;
+}
+
+header {
+  background-color: #f1f4f5;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5em;
+  position: relative;
+}
+
+main {
+  background-color: #fff;
+  overflow: auto;
+}
+
+main .no-margin-bottom {
+  margin-bottom: 0;
+}
+
+.card {
+  padding: 1em;
+}
+
+.flex {
+  display: flex;
+}
+
+.button-close {
+  align-self: flex-start;
+  border-radius: 50%;
+  background-color: #f1f4f5;
+  border-style: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0.25em .75em;
+  font-size: 1em;
+  font-family: cursive;
+  font-weight: 900;
+  margin-left: 1em;
+  border: 1px solid black;
+}
+
+.input-lg {
+  width: 100%;
+  padding: 0.5em 1em;
+}
+
+table {
+  margin-top: 1em;
+  padding: 1em;
+  width: 100%;
+}
+
+table th, table td {
+  border-bottom: 1px solid #272c2f;
+  padding: 1em;
+  text-align: center;
+}
+@media only screen and (max-width: 48em) {
+  table th, table td {
+    max-width: 4em;
+    padding: 1em 0.2em;
+  }
+}
+@media only screen and (max-width: 48em) and (max-width: 48em) {
+  table th:first-child, table td:first-child {
+    display: none;
+  }
+}
+
+table th {
+  text-transform: uppercase;
+}
+
+.striped-table tr:nth-child(even) {
+  background-color: #f1f4f5;
+}
+
+.striped-table th:last-child {
+  width: 14em;
+}
+
+input:focus {
+  outline: none;
+  border-radius: #869514;
+  box-shadow: 0 0 3px #869514;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-column-gap: 1vmax;
+  grid-row-gap: 1vmax;
+  grid-auto-flow: dense;
+}
+
+.col-xs-4 {
+  grid-column-end: span 4;
+}
+
+.col-xs-12 {
+  grid-column-end: span 12;
+}
+
+h1 {
+  font-size: 2.2em;
+  margin-bottom: 2em;
+}
+
+.title {
+  font-weight: 400;
+  text-transform: uppercase;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+}
