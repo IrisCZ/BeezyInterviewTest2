@@ -15,6 +15,10 @@ class Books extends React.Component {
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleAuthorChange = this.handleAuthorChange.bind(this);
     this.handleGenreChange = this.handleGenreChange.bind(this);
+    this.handleNewGenreChange = this.handleNewGenreChange.bind(this);
+    this.handleGenresListChange = this.handleGenresListChange.bind(this);
+    this.addGenre = this.addGenre.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
     this.state.showModal = false;
   }
 
@@ -49,6 +53,10 @@ class Books extends React.Component {
     this.setState({genre: event.target.value});
   }
 
+  handleNewGenreChange(event){
+    this.setState({newGenre: event.target.value});
+  }
+
   handleGenresListChange(event){
     let index = event.target.dataset.index
     this.state.genres[index] = event.target.innerHTML;
@@ -74,7 +82,7 @@ class Books extends React.Component {
   }
   addGenre(){
       this.state.genres.push(this.state.newGenre);
-      this.setState({genres: this.state.newGenre})
+      this.setState({genres: this.state.genres})
   }
 
   deleteGenre(genreToDelete){
@@ -159,7 +167,7 @@ class Books extends React.Component {
         React.createElement('td', { "data-index": i,
                                     class: "editable",
                                     onClick: this.editGenreField,
-                                    onBlur: this.handleGenresListChange.bind(this)}, genre),
+                                    onBlur: this.handleGenresListChange}, genre),
         React.createElement('td', null, React.createElement('button', {class: 'button-close', title: 'Close', onClick: this.deleteGenre(genre).bind(this)}, 'X'))
       ]
         return React.createElement('tr', null, genreTableRow);
@@ -178,12 +186,12 @@ class Books extends React.Component {
                                         class:'input-lg modal__input',
                                         placeholder:'e.g. Comedy',
                                         value: this.state.newGenre,
-                                        onChange: this.handleGenreChange}),
-          React.createElement('button', {class: 'modal__add-button', onClick: this.addGenre.bind(this)}, '+')
+                                        onChange: this.handleNewGenreChange}),
+          React.createElement('button', {class: 'modal__add-button', onClick: this.addGenre}, '+')
         ]),
         React.createElement('table', {class:'striped-table'}, genresTable),
         React.createElement('p', null, 'To edit a genre click twice on its cell'),
-        React.createElement('button', {class:'modal__close-button', onClick:  this.toggleModal.bind(this)}, 'X')
+        React.createElement('button', {class:'modal__close-button', onClick: this.toggleModal}, 'X')
       ])
     ]
 
